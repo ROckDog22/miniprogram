@@ -1,4 +1,3 @@
-import { fetchUserCenter } from '../../services/usercenter/fetchUsercenter';
 import { getToPayOrderCount, getToSendOrderCount, getToReceiveOrderCount } from '../../services/order/order';
 import { ORDER_STATUS } from '../../services/order/order';
 import Toast from 'tdesign-miniprogram/toast/index';
@@ -10,6 +9,30 @@ const menuData = [
       tit: '',
       url: '',
       type: 'address',
+    },
+    {
+      title: '客服服务',
+      tit: '',
+      url: '',
+      type: 'service',
+    },
+    {
+      title: '帮助中心',
+      tit: '',
+      url: '',
+      type: 'help-center',
+    },
+    {
+      title: '优惠券',
+      tit: '',
+      url: '',
+      type: 'coupon',
+    },
+    {
+      title: '积分菜单',
+      tit: '',
+      url: '',
+      type: 'point',
     },
   ],
 ];
@@ -61,10 +84,14 @@ const getDefaultData = () => ({
     phoneNumber: '',
     userInfo_tank: false,
     currAuthStep: 1,
+    _id: '',
   },
   menuData,
   orderTagInfos,
-  customerServiceInfo: {},
+  customerServiceInfo: {
+    servicePhone: '15939659170',
+    serviceTimeDuration: '每周一至周五 10:00-12:00  14:00-17:00',
+  },
   showKefu: true,
   versionNo: '',
   toPayOrderCount: 0,
@@ -86,35 +113,27 @@ Page({
 
   onPullDownRefresh() {
   },
+
   init(){
     var user = wx.getStorageSync('userInfo')
     if (user && user.avatarUrl) {
         this.setData({
             userInfo: user,
         })
+        this.userinfoinit();
     }
   },
+  
   closeTank() {
-    if (!this.data.userInfo.userInfo_tank) {
-        this.setData({
-            userInfo: {
-                ...this.data.userInfo,
-                userInfo_tank: true
-            },
-        })
-
-    }else{
-      this.setData({
-        userInfo: {
-            ...this.data.userInfo,
-            userInfo_tank: false
-        },
-      })
-    }
+    this.setData({
+      userInfo: {
+        ...this.data.userInfo,
+        userInfo_tank: !this.data.userInfo.userInfo_tank
+      }
+    })
   },
 
   userinfoinit() {
-    this.getOpenid();
     this.fetUseriInfoHandle();
     this.initOrderCount();
   },
@@ -139,29 +158,34 @@ Page({
       success: (res) => {
         // 判断存储
         if (res.confirm) {
-          var res = wx.cloud.callFunction({
+          wx.cloud.callFunction({
             name: 'login',
-          });
-          if (res.result && res.result.records && res.result.records.length > 0){
-            this.setData({ 
-              userInfo: {
-                ...this.data.userInfo,
-                avatarUrl: res.result.records[0].avatar,
-                nickName: res.result.records[0].nickName,
-                phoneNumber: res.result.records[0].phoneNumber,
-                gender: res.result.records[0].gender,
-                currAuthStep: 3,
-              } 
-            });
-            wx.setStorageSync('userInfo', this.data.userInfo);
-          }else{
-            this.setData({
-              userInfo: {
+          }).then(res => {
+            if (res.result && res.result.records && res.result.records.length > 0){
+              this.setData({ 
+                userInfo: {
                   ...this.data.userInfo,
-                  userInfo_tank: true
-              },
-            })
-          }
+                  avatarUrl: res.result.records[0].avatar,
+                  nickName: res.result.records[0].nickName,
+                  phoneNumber: res.result.records[0].phoneNumber,
+                  gender: res.result.records[0].gender,
+                  currAuthStep: 3,
+                  _id: res.result.records[0]._id,
+                } 
+              });
+              wx.setStorageSync('userInfo', this.data.userInfo);
+              this.userinfoinit();
+            }else{
+              this.setData({
+                userInfo: {
+                    ...this.data.userInfo,
+                    userInfo_tank: true
+                },
+              })
+            }
+          }).catch(err => {
+            console.error('login error:', err);
+          });
         } else if (res.cancel) {
           
         }
@@ -185,10 +209,10 @@ Page({
         })
     }
     this.setData({
-        userInfo: {
-            ...this.data.userInfo,
-            userInfo_tank: false
-        }
+      userInfo: {
+        ...this.data.userInfo,
+        userInfo_tank: !this.data.userInfo.userInfo_tank
+      }
     })
     wx.showLoading({
         title: '正在注册',
@@ -220,12 +244,14 @@ Page({
                       avatarUrl: fileID,
                       nickName: this.data.nickName,
                       phoneNumber: "15939659170",
-                    gender: 2,
-                    currAuthStep: 3,
-                  } 
+                      gender: 2,
+                      currAuthStep: 3,
+                      _id: res.result.data.id,
+                     } 
                   });
-    
+                  console.log('this.data.userInfo---', this.data.userInfo)
                   wx.setStorageSync('userInfo', this.data.userInfo);
+                  this.userinfoinit();
                 }
               },
               fail: err => {
@@ -244,56 +270,46 @@ Page({
     })
   },
 
-  getUserdata() {
-    const openid = wx.getStorageSync('openid');
-    if (openid) {
-      this.setData({ openid });
-    } else {
-      wx.cloud.callFunction({
-        name: 'login',
-        success: res => {
-          this.setData({ openid: res.result.openid });
-          wx.setStorageSync('openid', res.result.openid);
-        },
-        fail: err => {
-          console.error('云函数失败', err);
-        }
-      });
-    }
-  },
-  
   async initOrderCount() {
+    console.log('this.data.userInfo._id---', this.data.userInfo._id)
     const [pay, send, receive] = await Promise.all([
-      getToPayOrderCount(),
-      getToSendOrderCount(),
-      getToReceiveOrderCount(),
+      getToPayOrderCount(this.data.userInfo._id),
+      getToSendOrderCount(this.data.userInfo._id),
+      getToReceiveOrderCount(this.data.userInfo._id),
     ]);
     this.setData({
       'orderTagInfos[0].orderNum': pay,
       'orderTagInfos[1].orderNum': send,
       'orderTagInfos[2].orderNum': receive,
     });
+    console.log('this.data.orderTagInfos---', this.data.orderTagInfos)
   },
 
   fetUseriInfoHandle() {
-    fetchUserCenter(this.data.openid).then(({ userInfo, countsData, customerServiceInfo }) => {
-      // eslint-disable-next-line no-unused-expressions
-      menuData?.[0].forEach((v) => {
-        countsData.forEach((counts) => {
-          if (counts.type === v.type) {
-            // eslint-disable-next-line no-param-reassign
-            v.tit = counts.num;
-          }
-        });
+    const countsData = [
+      {
+        num: 2,
+        name: '积分',
+        type: 'point',
+      },
+      {
+        num: 10,
+        name: '优惠券',
+        type: 'coupon',
+      },
+    ];
+
+    menuData?.[0].forEach((v) => {
+      countsData.forEach((counts) => {
+        if (counts.type === v.type) {
+          v.tit = counts.num;
+        }
       });
-      this.setData({
-        userInfo,
-        menuData,
-        customerServiceInfo,
-        currAuthStep: 2,
-      });
-      wx.stopPullDownRefresh();
     });
+    this.setData({
+      menuData,
+    });
+    wx.stopPullDownRefresh();
   },
 
   onClickCell({ currentTarget }) {

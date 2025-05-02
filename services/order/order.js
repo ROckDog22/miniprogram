@@ -112,30 +112,30 @@ export async function listOrder({ pageSize, pageNumber, status }) {
   ).data;
 }
 
-async function getOrderCountOfStatus(status) {
+async function getOrderCountOfStatus(status, userId) {
   if (cloudbaseTemplateConfig.useMock) {
     return ORDER.filter((x) => x.status === status).length;
   }
 
   return (
     await model()[ORDER_MODEL_KEY].list({
-      filter: { where: { status: { $eq: status } } },
+      filter: { where: { status: { $eq: status }, user: { $eq: userId }}},
       select: { _id: true },
       getCount: true,
     })
   ).data.total;
 }
 
-export async function getToPayOrderCount() {
-  return getOrderCountOfStatus(ORDER_STATUS.TO_PAY);
+export async function getToPayOrderCount(userId) {
+  return getOrderCountOfStatus(ORDER_STATUS.TO_PAY, userId);
 }
 
-export async function getToSendOrderCount() {
-  return getOrderCountOfStatus(ORDER_STATUS.TO_SEND);
+export async function getToSendOrderCount(userId) {
+  return getOrderCountOfStatus(ORDER_STATUS.TO_SEND, userId);
 }
 
-export async function getToReceiveOrderCount() {
-  return getOrderCountOfStatus(ORDER_STATUS.TO_RECEIVE);
+export async function getToReceiveOrderCount(userId) {
+  return getOrderCountOfStatus(ORDER_STATUS.TO_RECEIVE, userId);
 }
 
 /**

@@ -183,7 +183,7 @@ page {
 .avatar_url {
   width: 80rpx;
   height: 80rpx;
-  border-radius: 50%;
+  border-radius: 0%;
 }
 
 .tank_content {
@@ -229,7 +229,7 @@ page {
   bottom: 0;
   right: -10rpx;
   background-color: rgba(0, 0, 0, 0.3);
-  border-radius: 50%;
+  border-radius: 0%;
   width: 40rpx;
   height: 40rpx;
   display: flex;
@@ -264,7 +264,7 @@ page {
   margin: 0 !important;
   width: 80rpx !important;
   height: 80rpx !important;
-  border-radius: 50% !important;
+  border-radius: 0% !important;
   font-size: 32rpx !important;
   overflow: visible !important;
 }

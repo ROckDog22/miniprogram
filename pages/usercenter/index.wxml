@@ -38,9 +38,9 @@
             <text>头像：</text>
             <button class="avatar_button" open-type="chooseAvatar" bind:chooseavatar="onChooseAvatar">
                 <image class="avatar_url" src="{{avatarUrl}}"></image>
-                <view class="pos_photo">
+                <!-- <view class="pos_photo">
                     <text class="iconfont icon-paizhao"></text>
-                </view>
+                </view> -->
             </button>
         </view>
         <view class="tank_content">
