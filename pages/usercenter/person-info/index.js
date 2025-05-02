@@ -1,4 +1,3 @@
-import { fetchPerson } from '../../../services/usercenter/fetchPerson';
 import { phoneEncryption } from '../../../utils/util';
 import Toast from 'tdesign-miniprogram/toast/index';
 
@@ -31,12 +30,18 @@ Page({
     this.fetchData();
   },
   fetchData() {
-    fetchPerson().then((personInfo) => {
-      this.setData({
-        personInfo,
-        'personInfo.phoneNumber': phoneEncryption(personInfo.phoneNumber),
-      });
+    var res  = wx.getStorageSync('userInfo');
+    console.log('34 me personInfo---', res);
+    this.setData({
+      personInfo:{
+        avatarUrl: res.avatarUrl,
+        nickName: res.nickName,
+        gender: res.gender,
+        phoneNumber: phoneEncryption(res.phoneNumber),
+      },
     });
+    console.log('43 me personInfo---', this.data.personInfo);
+
   },
   onClickCell({ currentTarget }) {
     const { dataset } = currentTarget;

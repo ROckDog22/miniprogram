@@ -24,12 +24,15 @@ Component({
   },
   data: {
     defaultAvatarUrl:
-      'https://cdn-we-retail.ym.tencent.com/miniapp/usercenter/icon-user-center-avatar@2x.png',
+      '/images/no_login.png',
     AuthStepType,
   },
   methods: {
     gotoUserEditPage() {
       this.triggerEvent('gotoUserEditPage');
     },
+    userlogin() {
+      this.triggerEvent('userlogin');
+    }
   },
 });

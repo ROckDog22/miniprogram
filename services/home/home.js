@@ -9,6 +9,5 @@ export async function getHomeSwiper() {
   if (cloudbaseTemplateConfig.useMock) {
     return HOME_SWIPER[0];
   }
-
   return (await model()[HOME_SWIPER_MODEL_KEY].list({ select: { images: true } })).data.records[0];
 }
