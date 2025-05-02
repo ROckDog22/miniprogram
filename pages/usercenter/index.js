@@ -271,7 +271,6 @@ Page({
   },
 
   async initOrderCount() {
-    console.log('this.data.userInfo._id---', this.data.userInfo._id)
     const [pay, send, receive] = await Promise.all([
       getToPayOrderCount(this.data.userInfo._id),
       getToSendOrderCount(this.data.userInfo._id),
@@ -282,7 +281,6 @@ Page({
       'orderTagInfos[1].orderNum': send,
       'orderTagInfos[2].orderNum': receive,
     });
-    console.log('this.data.orderTagInfos---', this.data.orderTagInfos)
   },
 
   fetUseriInfoHandle() {
