@@ -1,0 +1,55 @@
+.login-prompt-wrapper {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: center;
+  height: 100vh;
+  width: 100%;
+  padding-top: 10vh;
+  box-sizing: border-box;
+}
+
+.login-prompt-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  padding: 0 30rpx;
+  box-sizing: border-box;
+  width: 75%;
+  height: 50vh;
+}
+
+.login-prompt-image {
+  width: 100%;
+  margin-bottom: 60rpx;
+}
+
+.login-prompt-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+}
+
+.login-prompt-text {
+  font-size: 30rpx;
+  color: #A6A6A6;
+  margin-bottom: 50rpx;
+  text-align: center;
+  width: 100%;
+}
+
+.login-prompt-button {
+  width: 380rpx;
+  height: 96rpx;
+  line-height: 96rpx;
+  background-color: #ff5f98;
+  color: #fff;
+  font-size: 34rpx;
+  font-weight: 500;
+  border-radius: 48rpx;
+  padding: 0;
+  margin: 0;
+  box-shadow: 0 6rpx 12rpx rgba(255, 95, 152, 0.2);
+} 

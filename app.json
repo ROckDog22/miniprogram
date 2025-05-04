@@ -30,7 +30,7 @@
     "pages/order/delivery-detail/index",
     "pages/order/invoice/index",
     "pages/usercenter/name-edit/index",
-    "pages/usercenter/login/login-phone/index"
+    "pages/usercenter/login-phone/index"
   ],
   "tabBar": {
     "custom": true,

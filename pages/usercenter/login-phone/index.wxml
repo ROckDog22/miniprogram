@@ -1,4 +1,4 @@
-<view class="login-container">
+<!-- <view class="login-container">
   <view class="login-header">
     <view class="login-title">即刻登录 批发订货</view>
   </view>
@@ -21,4 +21,5 @@
     <text> 和 </text>
     <text class="agreement-link" bindtap="showPrivacyPolicy">《隐私政策》</text>
   </view>
-</view>
+</view> -->
+<login-prompt></login-prompt>

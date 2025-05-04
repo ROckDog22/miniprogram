@@ -63,7 +63,7 @@
         },
         {
           "name": "示例页-手机登录",
-          "pathName": "pages/usercenter/login/login-phone/index",
+          "pathName": "pages/usercenter/login-phone/index",
           "query": "",
           "scene": null
         },

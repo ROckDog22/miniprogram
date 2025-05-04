@@ -1,0 +1,9 @@
+<view class="login-prompt-wrapper">
+  <view class="login-prompt-container">
+    <image class="login-prompt-image" src="/images/login-prompt.png" mode="widthFix"></image>
+    <view class="login-prompt-content">
+      <text class="login-prompt-text">{{text}}</text>
+      <button class="login-prompt-button" bind:tap="handleLogin">{{buttonText}}</button>
+    </view>
+  </view>
+</view>
