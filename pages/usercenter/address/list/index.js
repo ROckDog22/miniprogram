@@ -28,9 +28,11 @@ Page({
   hasSelect: false,
 
   onLoad(query) {
+    var userInfo  = wx.getStorageSync('userInfo');
     const { selectMode, id = '' } = query;
     this.setData({
       id,
+      userInfo,
     });
     this.selectMode = selectMode === 'true';
     this.init();
@@ -60,7 +62,7 @@ Page({
     }
   },
   async getAddressList() {
-    const addressList = await getAllAddress();
+    const addressList = await getAllAddress(this.data.userInfo.userId);
     this.setData({ addressList });
   },
   toast(message) {

@@ -106,10 +106,12 @@ Page({
       listLoading: LIST_LOADING_STATUS.LOADING,
     });
     try {
+      var userInfo  = wx.getStorageSync('userInfo');
       const { records, total } = await listOrder({
         pageSize: this.page.size,
         pageNumber: this.page.num,
         status: statusCode !== ORDER_STATUS_ALL ? statusCode : undefined,
+        userId: userInfo.userId,
       });
 
       records.forEach((order) => (order.statusDesc = orderStatusToName(order.status)));

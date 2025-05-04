@@ -15,7 +15,7 @@ Page({
     name: '',
     phone: '',
     addressId: null,
-
+    user: '',
     loading: false,
   },
   setLoading() {
@@ -109,7 +109,7 @@ Page({
   },
   async formSubmit() {
     const { isLegal, tips } = this.onVerifyInputLegal();
-
+    const userInfo = wx.getStorageSync('userInfo');
     if (isLegal) {
       const { detailAddress, name, phone, addressId } = this.data;
       this.setLoading();
@@ -119,12 +119,13 @@ Page({
         action = () => updateAddress({ name, address: detailAddress, phone, _id: addressId });
         failedMessage = '修改地址失败，请稍候重试';
       } else {
-        action = () => createAddress({ name, phone, address: detailAddress });
+        action = () => createAddress({ name, phone, address: detailAddress, userId: userInfo.userId });
         failedMessage = '添加地址失败，请稍候重试';
       }
+      await action();
 
       try {
-        await action();
+        // await action();
         addressListShouldFresh();
         wx.navigateBack({ delta: 1 });
       } catch {

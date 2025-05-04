@@ -27,7 +27,6 @@
 </t-popup>
 <t-toast id="t-toast" />
 
-
 <view>
     <view class="userInfo_tank_bg" bindtap="closeTank" wx:if="{{userInfo.userInfo_tank}}"></view>
     <view class="userInfo_tank {{userInfo.userInfo_tank?'transfromjoin':'transfromout'}}">

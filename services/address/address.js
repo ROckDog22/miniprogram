@@ -5,10 +5,7 @@ import { DELIVERY_INFO, createId } from '../cloudbaseMock/index';
 
 const DELIVERY_INFO_MODEL_KEY = DATA_MODEL_KEY.DELIVERY_INFO;
 
-export async function getAllAddress() {
-  if (cloudbaseTemplateConfig.useMock) {
-    return DELIVERY_INFO;
-  }
+export async function getAllAddress(userId) {
   return getAll({
     name: DELIVERY_INFO_MODEL_KEY,
     select: {
@@ -16,6 +13,13 @@ export async function getAllAddress() {
       phone: true,
       address: true,
       name: true,
+    },
+    filter: {
+      where: {
+        user: {
+          $eq: userId,
+        },
+      },
     },
   });
 }
@@ -29,21 +33,15 @@ export async function getAllAddress() {
  * }} param0
  * @returns
  */
-export function createAddress({ name, address, phone }) {
-  if (cloudbaseTemplateConfig.useMock) {
-    DELIVERY_INFO.push({
-      address,
-      name,
-      phone,
-      _id: createId(),
-    });
-    return;
-  }
+export function createAddress({ name, address, phone, userId }) {
   return model()[DELIVERY_INFO_MODEL_KEY].create({
     data: {
-      name,
-      address,
-      phone,
+      name: name,
+      address: address,
+      phone: phone,
+      user: {
+        _id: userId,
+      },
     },
   });
 }
@@ -59,13 +57,6 @@ export function createAddress({ name, address, phone }) {
  */
 export function updateAddress(props) {
   const { name, address, phone, _id } = props;
-  if (cloudbaseTemplateConfig.useMock) {
-    Object.assign(
-      DELIVERY_INFO.find((x) => x._id === _id),
-      props,
-    );
-    return;
-  }
   return model()[DELIVERY_INFO_MODEL_KEY].update({
     data: {
       name,

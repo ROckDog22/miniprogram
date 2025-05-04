@@ -75,10 +75,6 @@ Page({
     promotionGoodsList: [], //当前门店商品列表(优惠券)
     currentStoreId: null, //当前优惠券storeId
     userAddress: {
-      detailAddress: "广东省广州市天河区珠江新城88号",
-      name: "张三",
-      phone: "13800138000",
-      _id: "address_123456"
     },
     goodsList: [],
     cartItems: [],
@@ -211,13 +207,14 @@ Page({
       await pay({ id: orderId, totalPrice });
       try {
         await updateOrderStatus({ orderId, status: ORDER_STATUS.TO_SEND });
+        console.log('支付成功');
         this.toast('支付成功');
       } catch (e) {
         console.error(e);
         this.toast('支付成功，但订单状态更新失败');
       } finally {
         setTimeout(() => {
-          wx.navigateBack();
+          wx.navigateBack({delta: 2});
         }, 1000);
       }
     } catch (e) {
@@ -264,11 +261,11 @@ Page({
      * 1.创建订单
      * 2.创建订单项
      */
-    console.log('submitOrderFromDirect', this.data);
     const { directSku, userAddress, goodsList } = this.data;
     const goods = goodsList[0];
-    const { id: orderId } = await createOrder({ status: ORDER_STATUS.TO_PAY, addressId: userAddress._id });
-
+    var userInfo = wx.getStorageSync('userInfo');
+    const { id: orderId } = await createOrder({ status: ORDER_STATUS.TO_PAY, addressId: userAddress._id , userId: userInfo.userId });
+ 
     try {
       await createOrderItemFromSku({ count: goods.num, orderId, skuId: directSku._id });
       const totalPrice = goods.price * goods.num;

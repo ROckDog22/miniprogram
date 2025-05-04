@@ -7,7 +7,7 @@
   <view wx:else class="no-address">
     <t-empty icon="" description="暂无收货地址，赶快添加吧" />
   </view>
-  <view class="bottom-fixed">
+  <view class="bottom-fixed" wx:if="{{addressList.length < 20}}">
     <view class="btn-wrap">
       <view class="address-btn {{addressList.length >= 20 ? 'btn-default':''}}" bind:tap="createHandle">
         <t-icon name="add" size="48rpx" color="#fff" t-class="custom-class" />

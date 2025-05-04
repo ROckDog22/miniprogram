@@ -366,16 +366,6 @@ export const CART_ITEM = [
 
 CART_ITEM.pop();
 
-export const DELIVERY_INFO = [
-  {
-    name: '客人a',
-    address: '深圳湾一号',
-    _id: 'A6JRPE3NYG',
-    phone: '13858585858',
-  },
-];
-
-DELIVERY_INFO.pop();
 
 export const ORDER = [
   {

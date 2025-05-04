@@ -33,25 +33,16 @@ export const orderStatusToName = (status) => Object.values(ORDER_STATUS_INFO).fi
  * }} param0
  * @returns
  */
-export async function createOrder({ status, addressId }) {
-  if (cloudbaseTemplateConfig.useMock) {
-    const _id = createId();
-    ORDER.push({
-      status,
-      delivery_info: {
-        _id: addressId,
-      },
-      _id,
-      createdAt: new Date().getTime()
-    });
-    return { id: _id };
-  }
+export async function createOrder({ status, addressId, userId }) {
   return (
     await model()[ORDER_MODEL_KEY].create({
       data: {
         status,
         delivery_info: {
           _id: addressId,
+        },
+        user: {
+          _id: userId,
         },
       },
     })
@@ -73,26 +64,16 @@ export function getAllOrder() {
  * }}} param0
  * @returns
  */
-export async function listOrder({ pageSize, pageNumber, status }) {
-  if (cloudbaseTemplateConfig.useMock) {
-    const filteredOrder = status == null ? ORDER : ORDER.filter((x) => x.status === status);
-    const startIndex = (pageNumber - 1) * pageSize;
-    const endIndex = startIndex + pageSize;
-    const records = filteredOrder.slice(startIndex, endIndex);
-    const total = filteredOrder.length;
-    return {
-      records,
-      total,
-    };
-  }
-
-  if (status != null) {
+export async function listOrder({ pageSize, pageNumber, status, userId }) {
     return (
       await model()[ORDER_MODEL_KEY].list({
         filter: {
           where: {
             status: {
               $eq: status,
+            },
+            user: {
+              $eq: userId,
             },
           },
         },
@@ -101,15 +82,6 @@ export async function listOrder({ pageSize, pageNumber, status }) {
         getCount: true,
       })
     ).data;
-  }
-  return (
-    await model()[ORDER_MODEL_KEY].list({
-      filter: {},
-      pageSize,
-      pageNumber,
-      getCount: true,
-    })
-  ).data;
 }
 
 async function getOrderCountOfStatus(status, userId) {
@@ -143,11 +115,6 @@ export async function getToReceiveOrderCount(userId) {
  * @param {String} orderId
  */
 export async function getOrder(orderId) {
-  if (cloudbaseTemplateConfig.useMock) {
-    const order = ORDER.find(o => o._id === orderId);
-    order.delivery_info = DELIVERY_INFO.find(i => i._id === order.delivery_info._id)
-    return order
-  }
   return (
     await model()[ORDER_MODEL_KEY].get({
       filter: {
@@ -191,10 +158,6 @@ export async function updateOrderDeliveryInfo({ orderId, deliveryInfoId }) {
  * @returns
  */
 export async function updateOrderStatus({ orderId, status }) {
-  if (cloudbaseTemplateConfig.useMock) {
-    ORDER.find(x => x._id === orderId).status = status
-    return;
-  }
   return await model()[ORDER_MODEL_KEY].update({
     data: {
       status,

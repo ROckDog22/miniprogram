@@ -16,24 +16,24 @@ const menuData = [
       url: '',
       type: 'service',
     },
-    {
-      title: '帮助中心',
-      tit: '',
-      url: '',
-      type: 'help-center',
-    },
-    {
-      title: '优惠券',
-      tit: '',
-      url: '',
-      type: 'coupon',
-    },
-    {
-      title: '积分菜单',
-      tit: '',
-      url: '',
-      type: 'point',
-    },
+    // {
+    //   title: '帮助中心',
+    //   tit: '',
+    //   url: '',
+    //   type: 'help-center',
+    // },
+    // {
+    //   title: '优惠券',
+    //   tit: '',
+    //   url: '',
+    //   type: 'coupon',
+    // },
+    // {
+    //   title: '积分菜单',
+    //   tit: '',
+    //   url: '',
+    //   type: 'point',
+    // },
   ],
 ];
 
@@ -84,7 +84,7 @@ const getDefaultData = () => ({
     phoneNumber: '',
     userInfo_tank: false,
     currAuthStep: 1,
-    _id: '',
+    userId: '',
   },
   menuData,
   orderTagInfos,
@@ -137,18 +137,21 @@ Page({
     this.fetUseriInfoHandle();
     this.initOrderCount();
   },
+  
   onChooseAvatar(e) {
     console.log(e);
     this.setData({
         avatarUrl: e.detail.avatarUrl
     })
   },
+
   getNickName(e) {
       console.log(e);
       this.setData({
           nickName: e.detail.value
       })
   },
+
   userlogin() {
     wx.showModal({
       title: '',  
@@ -170,7 +173,7 @@ Page({
                   phoneNumber: res.result.records[0].phoneNumber,
                   gender: res.result.records[0].gender,
                   currAuthStep: 3,
-                  _id: res.result.records[0]._id,
+                  userId: res.result.records[0]._id,
                 } 
               });
               wx.setStorageSync('userInfo', this.data.userInfo);
@@ -195,6 +198,7 @@ Page({
       }
     });
   },
+
   submit(e) {
     if (!this.data.avatarUrl) {
         return wx.showToast({
@@ -246,7 +250,7 @@ Page({
                       phoneNumber: "15939659170",
                       gender: 2,
                       currAuthStep: 3,
-                      _id: res.result.data.id,
+                      userId: res.result.data.id,
                      } 
                   });
                   console.log('this.data.userInfo---', this.data.userInfo)
@@ -272,9 +276,9 @@ Page({
 
   async initOrderCount() {
     const [pay, send, receive] = await Promise.all([
-      getToPayOrderCount(this.data.userInfo._id),
-      getToSendOrderCount(this.data.userInfo._id),
-      getToReceiveOrderCount(this.data.userInfo._id),
+      getToPayOrderCount(this.data.userInfo.userId),
+      getToSendOrderCount(this.data.userInfo.userId),
+      getToReceiveOrderCount(this.data.userInfo.userId),
     ]);
     this.setData({
       'orderTagInfos[0].orderNum': pay,

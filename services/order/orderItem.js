@@ -1,8 +1,6 @@
 import { model, getAll } from '../../services/_utils/model';
 import { getSkuDetail } from '../sku/sku';
 import { DATA_MODEL_KEY } from '../../config/model';
-import { cloudbaseTemplateConfig } from '../../config/index';
-import { ORDER_ITEM, createId } from '../cloudbaseMock/index';
 
 const ORDER_ITEM_MODEL_KEY = DATA_MODEL_KEY.ORDER_ITEM;
 
@@ -29,19 +27,6 @@ export async function getOrderItem(id) {
 }
 
 export async function createOrderItem({ count, skuId, orderId }) {
-  if (cloudbaseTemplateConfig.useMock) {
-    ORDER_ITEM.push({
-      _id: createId(),
-      count,
-      order: {
-        _id: orderId,
-      },
-      sku: {
-        _id: skuId,
-      },
-    });
-    return;
-  }
   return model()[ORDER_ITEM_MODEL_KEY].create({
     data: {
       count,
@@ -64,18 +49,6 @@ export function getAllOrderItems() {
  * @param {{orderId: String}} param0
  */
 export async function getAllOrderItemsOfAnOrder({ orderId }) {
-  if (cloudbaseTemplateConfig.useMock) {
-    const orderItems = ORDER_ITEM.filter((orderItem) => orderItem.order._id === orderId);
-    await Promise.all(
-      orderItems.map(async (orderItem) => {
-        const skuId = orderItem.sku._id;
-        const sku = await getSkuDetail(skuId);
-        orderItem.sku = sku;
-      }),
-    );
-    return orderItems;
-  }
-
   const orderItems = await getAll({
     name: ORDER_ITEM_MODEL_KEY,
     filter: {

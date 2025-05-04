@@ -17,6 +17,7 @@ export async function getAll({ filter, select, name }) {
     data: { total },
   } = first;
   const totalPage = Math.ceil(total / 200);
+
   const lists = await Promise.all(
     Array.from({ length: totalPage - 1 }, (_, index) => index + 2).map((pageNumber) =>
       model()[name].list(
