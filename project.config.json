@@ -62,6 +62,12 @@
           "scene": null
         },
         {
+          "name": "示例页-手机登录",
+          "pathName": "pages/usercenter/login/login-phone/index",
+          "query": "",
+          "scene": null
+        },
+        {
           "name": "示例页-商品分类",
           "pathName": "pages/goods/category/index",
           "query": "",

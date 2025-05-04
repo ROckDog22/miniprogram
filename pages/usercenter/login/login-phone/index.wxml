@@ -1,0 +1,24 @@
+<view class="login-container">
+  <view class="login-header">
+    <view class="login-title">即刻登录 批发订货</view>
+  </view>
+  
+  <view class="login-button-container">
+    <button 
+      class="phone-login-button" 
+      open-type="getPhoneNumber" 
+      bindgetphonenumber="getPhoneNumber">
+      手机号快捷登录
+    </button>
+    
+    <view class="skip-login" bindtap="skipLogin">暂不登录</view>
+  </view>
+  
+  <view class="agreement">
+    <checkbox checked="{{isAgree}}" bindtap="toggleAgreement"></checkbox>
+    <text>我已阅读并同意 </text>
+    <text class="agreement-link" bindtap="showServiceAgreement">《服务协议》</text>
+    <text> 和 </text>
+    <text class="agreement-link" bindtap="showPrivacyPolicy">《隐私政策》</text>
+  </view>
+</view>

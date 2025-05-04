@@ -1,0 +1,17 @@
+<!--components/login-prompt/index.wxml-->
+<view class="login-prompt-container" wx:if="{{show}}">
+  <view class="login-prompt-content">
+    <!-- Illustration with text overlay -->
+    <view class="login-illustration">
+      <image class="login-bg-image" src="/images/login-prompt.png" mode="aspectFit"></image>
+      <view class="login-text-overlay">
+        <text class="prompt-text">您还未登录</text>
+      </view>
+    </view>
+    
+    <!-- Login button -->
+    <view class="button-container">
+      <button class="login-button" bindtap="goToLogin">去登录</button>
+    </view>
+  </view>
+</view> 
