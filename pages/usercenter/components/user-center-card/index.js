@@ -24,7 +24,7 @@ Component({
   },
   data: {
     defaultAvatarUrl:
-      '/images/no_login.png',
+      '/assets/images/no_login.png',
     AuthStepType,
   },
   methods: {
