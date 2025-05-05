@@ -1,0 +1,31 @@
+.login-notice {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  height: 88rpx;
+  background-color: rgba(0, 0, 0, 0.7);
+  padding: 0 30rpx;
+  z-index: 100;
+  padding-bottom: calc(110rpx + env(safe-area-inset-bottom)); /* 适配新iPhone机型 */
+}
+
+.login-notice-text {
+  font-size: 28rpx;
+  color: #ffffff;
+}
+
+.login-btn {
+  width: 140rpx;
+  height: 60rpx;
+  background-color: #FF4D4F;
+  border-radius: 30rpx;
+  color: #ffffff;
+  font-size: 28rpx;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+} 

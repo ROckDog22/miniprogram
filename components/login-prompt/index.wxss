@@ -3,10 +3,10 @@
   flex-direction: column;
   justify-content: flex-start;
   align-items: center;
-  height: 100vh;
+  height: 100%;
   width: 100%;
-  padding-top: 10vh;
   box-sizing: border-box;
+  padding-top: 5vh;
 }
 
 .login-prompt-container {
@@ -14,7 +14,7 @@
   flex-direction: column;
   align-items: center;
   justify-content: flex-start;
-  padding: 0 30rpx;
+  padding: 0 40rpx;
   box-sizing: border-box;
   width: 75%;
   height: 50vh;
@@ -40,11 +40,12 @@
   width: 100%;
 }
 
+
 .login-prompt-button {
   width: 380rpx;
   height: 96rpx;
   line-height: 96rpx;
-  background-color: #ff5f98;
+  background-color: #FF4D4F;
   color: #fff;
   font-size: 34rpx;
   font-weight: 500;

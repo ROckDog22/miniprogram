@@ -1,3 +1,5 @@
+<login-prompt></login-prompt>
+<view wx:if="">
 <!-- 分层购物车 -->
 <block wx:if="{{cartItems.length !== 0}}">
   <cart-group cartItems="{{cartItems}}" bindselectgoods="onGoodsSelect" bindselectstore="onStoreSelect" bindchangequantity="onQuantityChange" bindgocollect="goCollect" bindgoodsclick="goGoodsDetail" bindclearinvalidgoods="clearInvalidGoods" binddelete="onGoodsDelete" />
@@ -11,4 +13,5 @@
 <t-dialog id="t-dialog" />
 <view wx:if="{{loading}}">
   <loading-dialog show="{{loading}}" />
+</view>
 </view>
