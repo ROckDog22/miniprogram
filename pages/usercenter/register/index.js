@@ -3,24 +3,47 @@ Page({
    * 页面的初始数据
    */
   data: {
-    avatarUrl: '/assets/images/no_login.png',
-    contactName: '',
-    companyName: ''
+    userInfo: {
+      phoneNumber: '',
+      avatarUrl: '/assets/images/no_login.png',
+      contactName: '',
+      companyName: '',
+    }
+  },
+
+  onLoad(options) {
+    console.log("options", options);
+    this.setData({
+      userInfo: {
+        ...this.data.userInfo,
+        phoneNumber: options.code
+      }
+    })
   },
 
   onChooseAvatar(e) {
-    const { avatarUrl } = e.detail;
     this.setData({
-      avatarUrl
+      userInfo: {
+        ...this.data.userInfo,
+        avatarUrl: e.detail.avatarUrl
+      }
     });
-    
-    // 可以在这里将头像上传到服务器或临时保存
-    wx.setStorageSync('tempAvatarUrl', avatarUrl);
   },
 
-  handleSubmit() {
-    const { contactName, companyName, avatarUrl } = this.data;
-    
+  onContactNameInput(e) {
+    this.setData({
+      'userInfo.contactName': e.detail.value
+    });
+  },
+
+  onCompanyNameInput(e) {
+    this.setData({
+      'userInfo.companyName': e.detail.value
+    });
+  },
+
+  async handleSubmit() {
+    const { contactName, companyName, avatarUrl } = this.data.userInfo;
     // 验证必填字段
     if (!contactName) {
       wx.showToast({
@@ -29,31 +52,68 @@ Page({
       });
       return;
     }
-    
+
+    if (avatarUrl === '/assets/images/no_login.png') {
+      wx.showToast({
+        title: '请上传头像',
+        icon: 'none'
+      });
+      return;
+    }
+
+    let tempPath = avatarUrl
+    let suffix = /\.[^\.]+$/.exec(tempPath)[0];
+
+    //上传到云存储
+    await wx.cloud.uploadFile({
+        cloudPath: 'user-img/' + new Date().getTime() + suffix, //在云端的文件名称
+        filePath: tempPath, // 临时文件路径
+        success: res => {
+            let fileID = res.fileID
+            this.setData({
+              userInfo: {
+                ...this.data.userInfo,
+                avatarUrl: fileID
+              }
+            });
+        },
+        fail: err => {
+            wx.hideLoading()
+            console.log('上传失败', res)
+            wx.showToast({
+                icon: 'error',
+                title: '上传头像错误',
+            })
+        }
+    })
+
     // 显示加载提示
     wx.showLoading({
       title: '提交中...',
       mask: true
     });
     
-    // 构建用户注册数据
-    const userData = {
-      contactName,
-      companyName,
-      avatarUrl
-    };
-    
+
+    wx.showLoading({
+      title: '登录中...',
+      mask: true
+    });
+
+
     // 调用注册云函数或API
     wx.cloud.callFunction({
-      name: 'register',
-      data: userData
+      name: 'signup',
+      data: this.data.userInfo
     }).then(res => {
       wx.hideLoading();
-      
       if (res.result && res.result.success) {
         // 注册成功，保存用户信息
         const userInfo = res.result.data;
-        wx.setStorageSync('userInfo', userInfo);
+        const data = {
+          userInfo: userInfo,
+          token: res.result.token
+        }
+        wx.setStorageSync('data', data);
         
         // 提示注册成功
         wx.showToast({

@@ -1,6 +1,6 @@
 <view class="login-container">
   <view class="login-header">
-    <view class="login-title">云生科技 即刻登录 批发订货</view>
+    <view class="login-title">云生售卖店即刻登录</view>
   </view>
   
   <view class="login-button-container">
