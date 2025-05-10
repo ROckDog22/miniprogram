@@ -12,7 +12,6 @@ Page({
   },
 
   onLoad(options) {
-    console.log("options", options);
     this.setData({
       userInfo: {
         ...this.data.userInfo,
@@ -76,6 +75,65 @@ Page({
                 avatarUrl: fileID
               }
             });
+
+            // 显示加载提示
+            wx.showLoading({
+              title: '提交中...',
+              mask: true
+            });
+            
+
+            wx.showLoading({
+              title: '登录中...',
+              mask: true
+            });
+
+
+            // 调用注册云函数或API
+            wx.cloud.callFunction({
+              name: 'signup',
+              data: this.data.userInfo
+            }).then(res => {
+              console.log("res", res);
+              wx.hideLoading();
+              if (res.result && res.result.success) {
+                // 注册成功，保存用户信息
+                const userInfo = res.result.data;
+                const data = {
+                  userInfo: userInfo,
+                  token: res.result.token
+                }
+                wx.setStorageSync('data', data);
+                
+                // 提示注册成功
+                wx.showToast({
+                  title: '注册成功',
+                  icon: 'success',
+                  duration: 1500,
+                  success: () => {
+                    setTimeout(() => {
+                      // 注册成功后跳转到首页或其他页面
+                      wx.switchTab({
+                        url: '/pages/home/home'
+                      });
+                    }, 1500);
+                  }
+                });
+              } else {
+                // 注册失败
+                wx.showToast({
+                  title: res.result.message || '注册失败，请重试',
+                  icon: 'none'
+                });
+              }
+            }).catch(err => {
+              wx.hideLoading();
+              wx.showToast({
+                title: '注册失败，请重试',
+                icon: 'none'
+              });
+              console.error('注册失败:', err);
+            });
         },
         fail: err => {
             wx.hideLoading()
@@ -87,62 +145,5 @@ Page({
         }
     })
 
-    // 显示加载提示
-    wx.showLoading({
-      title: '提交中...',
-      mask: true
-    });
-    
-
-    wx.showLoading({
-      title: '登录中...',
-      mask: true
-    });
-
-
-    // 调用注册云函数或API
-    wx.cloud.callFunction({
-      name: 'signup',
-      data: this.data.userInfo
-    }).then(res => {
-      wx.hideLoading();
-      if (res.result && res.result.success) {
-        // 注册成功，保存用户信息
-        const userInfo = res.result.data;
-        const data = {
-          userInfo: userInfo,
-          token: res.result.token
-        }
-        wx.setStorageSync('data', data);
-        
-        // 提示注册成功
-        wx.showToast({
-          title: '注册成功',
-          icon: 'success',
-          duration: 1500,
-          success: () => {
-            setTimeout(() => {
-              // 注册成功后跳转到首页或其他页面
-              wx.switchTab({
-                url: '/pages/home/home'
-              });
-            }, 1500);
-          }
-        });
-      } else {
-        // 注册失败
-        wx.showToast({
-          title: res.result.message || '注册失败，请重试',
-          icon: 'none'
-        });
-      }
-    }).catch(err => {
-      wx.hideLoading();
-      wx.showToast({
-        title: '注册失败，请重试',
-        icon: 'none'
-      });
-      console.error('注册失败:', err);
-    });
   }
 }); 

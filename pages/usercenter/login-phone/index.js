@@ -1,3 +1,5 @@
+import AUTH from '../../../utils/getauth';
+
 Page({
 
   data: {
@@ -10,34 +12,6 @@ Page({
     if (userInfo && userInfo._id) {
       this.navigateBack();
     }
-  },
-
-  onReady() {
-
-  },
-
-  onShow() {
-
-  },
-
-  onHide() {
-
-  },
-
-  onUnload() {
-
-  },
-
-  onPullDownRefresh() {
-
-  },
-
-  onReachBottom() {
-
-  },
-
-  onShareAppMessage() {
-
   },
 
   getPhoneNumber(e) {
@@ -63,18 +37,11 @@ Page({
       mask: true
     });
 
-    const encryptedData = e.detail.encryptedData;
-    const iv = e.detail.iv;
 
     wx.cloud.callFunction({
       name: 'login',
-      data: {
-        encryptedData: encryptedData,
-        iv: iv
-      }
     }).then(res => {
-      console.log("login-phone", res);
-      wx.hideLoading();
+      wx.hideLoading(); 
       
       if(res.result && !res.result.success){
         wx.navigateTo({
@@ -83,9 +50,8 @@ Page({
       }else{
         if (res.result && res.result.success) {
           // 登录成功，保存用户信息
-          const userInfo = res.result.data;
-          wx.setStorageSync('userInfo', userInfo);
-          
+          const data = {userInfo:res.result.data, token:res.result.token};
+          AUTH.setLoginInfo(data);
           // 提示登录成功
           wx.showToast({
             title: '登录成功',

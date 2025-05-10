@@ -26,11 +26,9 @@ const AUTH = {
     const app = getApp();
     app.globalData.isLoggedIn = true;
     app.globalData.userInfo = data.userInfo;
-    
+
     // 通知观察者
-    if (app.watchLoggedIn) {
-      app.watchLoggedIn();
-    }
+    app.notifyLoginObservers();
   },
   
   clearLoginInfo() {
@@ -44,9 +42,7 @@ const AUTH = {
     app.globalData.userInfo = null;
     
     // 通知观察者
-    if (app.watchLoggedIn) {
-      app.watchLoggedIn();
-    }
+    app.notifyLoginObservers();
   }
 };
 

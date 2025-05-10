@@ -1,4 +1,4 @@
-<view class="login-notice">
+<view class="login-notice"  wx:if="{{!isLoggedIn}}">
   <text class="login-notice-text">登录查看专属价格及下单订货</text>
   <view class="login-btn" bind:tap="handleLogin">登录</view>
 </view> 

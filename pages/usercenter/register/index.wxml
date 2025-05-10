@@ -24,4 +24,4 @@
 
 <view class="button-container">
   <button class="submit-btn" bindtap="handleSubmit">提交</button>
-</view> 
+</view>   
