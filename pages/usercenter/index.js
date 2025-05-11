@@ -1,7 +1,7 @@
 import { getToPayOrderCount, getToSendOrderCount, getToReceiveOrderCount } from '../../services/order/order';
 import { ORDER_STATUS } from '../../services/order/order';
 import Toast from 'tdesign-miniprogram/toast/index';
-
+import AUTH from '../../utils/getauth';
 const menuData = [
   [
     {
@@ -82,9 +82,8 @@ const getDefaultData = () => ({
     avatarUrl: '',
     nickName: '',
     phoneNumber: '',
-    userInfo_tank: false,
-    currAuthStep: 1,
     userId: '',
+    currAuthStep: 1,
   },
   menuData,
   orderTagInfos,
@@ -115,165 +114,23 @@ Page({
   },
 
   init(){
-    var user = wx.getStorageSync('userInfo')
-    if (user && user.avatarUrl) {
+    if (AUTH.isLoggedIn()) {
         this.setData({
-            userInfo: user,
+            userInfo: {
+              ...wx.getStorageSync('userInfo'),
+              currAuthStep: 2,
+            }
         })
+        console.log(this.data.userInfo);
         this.userinfoinit();
     }
   },
   
-  closeTank() {
-    this.setData({
-      userInfo: {
-        ...this.data.userInfo,
-        userInfo_tank: !this.data.userInfo.userInfo_tank
-      }
-    })
-  },
-
   userinfoinit() {
-    this.fetUseriInfoHandle();
+    this.fetCountHandle();
     this.initOrderCount();
   },
   
-  onChooseAvatar(e) {
-    console.log(e);
-    this.setData({
-        avatarUrl: e.detail.avatarUrl
-    })
-  },
-
-  getNickName(e) {
-      console.log(e);
-      this.setData({
-          nickName: e.detail.value
-      })
-  },
-
-  userlogin() {
-    wx.showModal({
-      title: '',  
-      content: '您确定要使用微信登陆吗？', 
-      confirmText: '确定',  
-      cancelText: '取消',  
-      success: (res) => {
-        // 判断存储
-        if (res.confirm) {
-          wx.cloud.callFunction({
-            name: 'login',
-          }).then(res => {
-            if (res.result && res.result.records && res.result.records.length > 0){
-              this.setData({ 
-                userInfo: {
-                  ...this.data.userInfo,
-                  avatarUrl: res.result.records[0].avatar,
-                  nickName: res.result.records[0].nickName,
-                  phoneNumber: res.result.records[0].phoneNumber,
-                  gender: res.result.records[0].gender,
-                  currAuthStep: 3,
-                  userId: res.result.records[0]._id,
-                } 
-              });
-              wx.setStorageSync('userInfo', this.data.userInfo);
-              this.userinfoinit();
-            }else{
-              this.setData({
-                userInfo: {
-                    ...this.data.userInfo,
-                    userInfo_tank: true
-                },
-              })
-            }
-          }).catch(err => {
-            console.error('login error:', err);
-          });
-        } else if (res.cancel) {
-          
-        }
-      },
-      fail: (err) => {
-        console.error('showModal调用失败', err);
-      }
-    });
-  },
-
-  submit(e) {
-    if (!this.data.avatarUrl) {
-        return wx.showToast({
-            title: '请选择头像',
-            icon: 'error'
-        })
-    }
-    if (!this.data.nickName) {
-        return wx.showToast({
-            title: '请输入昵称',
-            icon: 'error'
-        })
-    }
-    this.setData({
-      userInfo: {
-        ...this.data.userInfo,
-        userInfo_tank: !this.data.userInfo.userInfo_tank
-      }
-    })
-    wx.showLoading({
-        title: '正在注册',
-        mask: 'true'
-    })
-    let tempPath = this.data.avatarUrl
-
-    let suffix = /\.[^\.]+$/.exec(tempPath)[0];
-    console.log(suffix);
-
-    //上传到云存储
-    wx.cloud.uploadFile({
-        cloudPath: 'userimg/' + new Date().getTime() + suffix, //在云端的文件名称
-        filePath: tempPath, // 临时文件路径
-        success: res => {
-            let fileID = res.fileID
-            wx.hideLoading()
-            wx.cloud.callFunction({
-              name: 'signup',
-              data: {
-                avatarUrl: fileID,
-                nickName: this.data.nickName,
-              },
-              success: res => {
-                if (res.result.success) {
-                  this.setData({ 
-                    userInfo: {
-                      ...this.data.userInfo,
-                      avatarUrl: fileID,
-                      nickName: this.data.nickName,
-                      phoneNumber: "15939659170",
-                      gender: 2,
-                      currAuthStep: 3,
-                      userId: res.result.data.id,
-                     } 
-                  });
-                  console.log('this.data.userInfo---', this.data.userInfo)
-                  wx.setStorageSync('userInfo', this.data.userInfo);
-                  this.userinfoinit();
-                }
-              },
-              fail: err => {
-                console.log('err---', err)
-              }
-            });
-        },
-        fail: err => {
-            wx.hideLoading()
-            console.log('上传失败', res)
-            wx.showToast({
-                icon: 'error',
-                title: '上传头像错误',
-            })
-        }
-    })
-  },
-
   async initOrderCount() {
     const [pay, send, receive] = await Promise.all([
       getToPayOrderCount(this.data.userInfo.userId),
@@ -287,7 +144,7 @@ Page({
     });
   },
 
-  fetUseriInfoHandle() {
+  fetCountHandle() {
     const countsData = [
       {
         num: 2,
@@ -313,6 +170,13 @@ Page({
     });
     wx.stopPullDownRefresh();
   },
+
+  userlogin() {
+    wx.navigateTo({
+      url: '/pages/usercenter/login-phone/index'
+    });
+  },
+
 
   onClickCell({ currentTarget }) {
     const { type } = currentTarget.dataset;
@@ -393,10 +257,10 @@ Page({
 
   gotoUserEditPage() {
     var userInfo  = wx.getStorageSync('userInfo');
-    if (userInfo.currAuthStep === 3) {
+    if (userInfo.currAuthStep === 2) {
       wx.navigateTo({ url: '/pages/usercenter/person-info/index' });
     } else {
-      this.fetUseriInfoHandle();
+      this.fetCountHandle();
     }
   },
 

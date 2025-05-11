@@ -50,7 +50,7 @@ Page({
       }else{
         if (res.result && res.result.success) {
           // 登录成功，保存用户信息
-          const data = {userInfo:res.result.data, token:res.result.token};
+          const data = {userInfo:res.result.data[0], token:res.result.token};
           AUTH.setLoginInfo(data);
           // 提示登录成功
           wx.showToast({
